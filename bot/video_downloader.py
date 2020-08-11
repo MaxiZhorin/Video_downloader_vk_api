@@ -35,6 +35,7 @@ def video_editor(file_name):
 
 
 def download(url, title, orig_title):
+    print(url)
     new_url = str( url.split( '?' )[0] )
     r = requests.get( new_url, stream=True )
     if float( dict( r.__dict__ ).get( 'headers', 'Content-Length' )['Content-Length'] ) / 1048576 > float( 700 ):
@@ -48,7 +49,6 @@ def download(url, title, orig_title):
                 file.write( chunk )
         print( 'Video downloaded', file_name, ots )
         file_name = video_editor( file_name )
-
         upload( file_name, new_tit, 181663673, orig_title )
 
 
@@ -77,7 +77,7 @@ def upload(file_name, title, owner, orig_title):
     print( req.text )
     print( '\nVideo uploaded', title, ots )
     try:
-        with open( "wall_downoaded.txt", 'a' ) as file_wall:
+        with open( "wall_downloaded.txt", 'a' ) as file_wall:
             file_wall.writelines( orig_title + '\n' )
     except IOError:
         print( "An IOError has occurred!" )
@@ -121,7 +121,7 @@ def get_videos_vk(search, ofset=1):
     list_videos = vk_api.video.search( q=search, sort=2, hd=1, adult=0, filters='mp4,short', count=200, offset=ofset )
     for link in list_videos.get( 'items' ):
         false_flag = True
-        video_link = str( 'https://vk.com/video' + str( link['owner_id'] ) + '_' + str( link['id'] ) )
+        video_link = str( 'https://m.vk.com/video' + str( link['owner_id'] ) + '_' + str( link['id'] ) )
         print( '***Нашел видео', link['title'], ots )
         with open( "wall.txt", 'r' ) as file_wall:
             for title in file_wall:
@@ -147,6 +147,7 @@ def get_url_vk(url, orig_title):
     html = session.auth_session.get( url, headers=headers ).text
     soup = BeautifulSoup( html, 'html.parser' )
     if soup.find( 'title' ):
+        print(soup)
         video_url = soup.text.split( 'ajax.preload' )[1]
         title = soup.text.split( 'id=\u005C"mv_title\u005C">' )[1]
         title = title.split( '<' )[0]
@@ -161,6 +162,7 @@ def get_url_vk(url, orig_title):
             video_url = video_url.replace( u"\u005C", '' )
         else:
             return False
+        print(video_url)
         get_titles_from_user( str(id_group), title, video_url, orig_title )
 
         print( '*** URL video original', video_url, ots )
@@ -169,8 +171,8 @@ def get_url_vk(url, orig_title):
 if __name__ == '__main__':
 
     id_bot = '6982959'  # id приложения вк
-    login_vk = '7927'  # логин вк
-    password_vk = 'S'  # пароль вк
+    login_vk = '79272140414'  # логин вк
+    password_vk = 'Sz1620151'  # пароль вк
     session = vk.AuthSession(id_bot, login_vk, password_vk, scope='video,wall,groups,offline' )
     vk_api = vk.API( session, v='5.95', lang='ru', timeout=10 )
 
@@ -183,7 +185,7 @@ if __name__ == '__main__':
                      ['видео', '####', '####', '####', '####'],
                      ]
 
-    id_group = "-1816"  # id группы вк куда будет производиться залив видео
+    id_group = "-189062591"  # id группы вк куда будет производиться залив видео
     ofset = 0
     i = 1
     range_set = 2  # каждая единица дает список 100 видео
