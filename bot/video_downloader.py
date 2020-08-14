@@ -49,11 +49,11 @@ def download(url, title, orig_title):
                 file.write( chunk )
         print( 'Video downloaded', file_name, ots )
         file_name = video_editor( file_name )
-        upload( file_name, new_tit, 181663673, orig_title )
+        upload( file_name, new_tit, str(id_group), orig_title )
 
 
 def upload(file_name, title, owner, orig_title):
-    video = vk_api.video.get( owner_id=('-' + str( owner )) )
+    video = vk_api.video.get( owner_id=(str( owner )) )
     video_wall = 0
     video_wall_iter = 0
     # Проверка на 50 записей в день
@@ -66,7 +66,7 @@ def upload(file_name, title, owner, orig_title):
     if video_wall_iter < 10:
         video_wall = 0
 
-    video = vk_api.video.save( name=title, description=arbitrade, group_id=owner, wallpost=video_wall )
+    video = vk_api.video.save( name=title, description=arbitrade, group_id=str(id_group), wallpost=video_wall )
     data = {
         'access_key': video['access_key']
     }
@@ -129,7 +129,7 @@ def get_videos_vk(search, ofset=1):
                     print( '###Выхожу из цикла,совпадение wall', ots )  # Если такое видео уже было скачано выходим из цикла
                     false_flag = False
 
-        with open( "wall_downoaded.txt", 'r' ) as file_wall:
+        with open( "wall_downloaded.txt", 'r' ) as file_wall:
             for title in file_wall:
                 if str( title.upper() )[:-1] == str( link['title'] ).upper():
                     print( '###Выхожу из цикла,совпадение wall_downloaded', title, ots )
@@ -145,23 +145,11 @@ def get_url_vk(url, orig_title):
     headers = {
         'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"}
     html = session.auth_session.get( url, headers=headers ).text
+    print(url)
     soup = BeautifulSoup( html, 'html.parser' )
     if soup.find( 'title' ):
-        print(soup)
-        video_url = soup.text.split( 'ajax.preload' )[1]
-        title = soup.text.split( 'id=\u005C"mv_title\u005C">' )[1]
-        title = title.split( '<' )[0]
-        print( title )
-        if video_url.count( 'url720' ):
-            video_url = video_url.split( 'url720":"' )[1]
-            video_url = video_url.split( '?' )[0]
-            video_url = video_url.replace( u"\u005C", '' )
-        elif video_url.count( 'url480' ):
-            video_url = video_url.split( 'url480":"' )[1]
-            video_url = video_url.split( '?' )[0]
-            video_url = video_url.replace( u"\u005C", '' )
-        else:
-            return False
+        video_url = soup.find_all('source')[1].get('src').split('?')[0]
+        title = orig_title
         print(video_url)
         get_titles_from_user( str(id_group), title, video_url, orig_title )
 
@@ -185,11 +173,11 @@ if __name__ == '__main__':
                      ['видео', '####', '####', '####', '####'],
                      ]
 
-    id_group = "-189062591"  # id группы вк куда будет производиться залив видео
+    id_group = "189062591"  # id группы вк куда будет производиться залив видео
     ofset = 0
     i = 1
     range_set = 2  # каждая единица дает список 100 видео
-    find = 'видео бомба'  # ключевое слово для поиска видео
+    find = 'cats'  # ключевое слово для поиска видео
     for i in range( 2 ):
         get_videos_vk(str(find), ofset )
         print(ofset)
