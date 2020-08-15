@@ -158,9 +158,9 @@ def get_url_vk(url, orig_title):
 
 if __name__ == '__main__':
 
-    id_bot = '6982959'  # id приложения вк
-    login_vk = '79272140414'  # логин вк
-    password_vk = 'Sz1620151'  # пароль вк
+    id_bot = '##'  # id приложения вк
+    login_vk = '##'  # логин вк
+    password_vk = '##'  # пароль вк
     session = vk.AuthSession(id_bot, login_vk, password_vk, scope='video,wall,groups,offline' )
     vk_api = vk.API( session, v='5.95', lang='ru', timeout=10 )
 
